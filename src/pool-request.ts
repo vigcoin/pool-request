@@ -27,9 +27,12 @@ export class PoolRequest {
     return this.rpc(uri, method, params);
   }
 
-  public async pool(path: string, method: string) {
+  public async pool(path: string, method: string = null) {
     const uri = this.toURI(this.poolConf) + path;
-    return this.request(uri, '', { method });
+    if (method) {
+      return this.request(uri, '', { method });
+    }
+    return this.request(uri, '');
   }
 
   private toURI(config: any) {
@@ -44,15 +47,18 @@ export class PoolRequest {
     }
     return 'http://localhost';
   }
-  private async request(uri: string, method: string, formData: object) {
+  private async request(uri: string, method: string, formData: object = null) {
     const options: any = {
-      body: formData,
       headers: {
         'User-Agent': 'VIG-COIN POOL Agent',
       },
       json: true, // Automatically parses the JSON string in the response
       uri,
     };
+
+    if (formData) {
+      options.body = formData;
+    }
 
     if (method) {
       options.method = method;

@@ -24,6 +24,22 @@ test('Should request pool', async () => {
   expect(json.error).toBe('ok');
 });
 
+test('Should request pool without method', async () => {
+  const url = 'http://www.example.com';
+  let scope = nock('http://www.example.com')
+    .get('/resource1')
+    .reply(200, { error: 'ok' });
+  const req = new PoolRequest(
+    {
+      url,
+    },
+    { host: 'www.example.com', port: 8080 },
+    { host: 'www.example.com', port: 80 }
+  );
+  const json = await req.pool('/resource1');
+  expect(json.error).toBe('ok');
+});
+
 test('Should request wallet', async () => {
   const url = 'http://www.example.com';
   let scope = nock('http://www.example.com:8080/')
