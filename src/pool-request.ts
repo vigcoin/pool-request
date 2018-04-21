@@ -1,20 +1,48 @@
 import * as rp from 'request-promise';
 
 export class PoolRequest {
-  public async daemon(uri: string, method: string, params: object) {
+  private daemonConf: any;
+  private walletConf: any;
+  private poolConf: any;
+
+  constructor(daemonConf: any, walletConf: any, poolConf: any) {
+    this.daemonConf = daemonConf;
+    this.walletConf = walletConf;
+    this.poolConf = poolConf;
+  }
+  public async daemon(path: string, method: string, params: object) {
+    const uri = this.toURI(this.daemonConf) + path;
     return this.rpc(uri, method, params);
   }
 
-  public async daemonArray(uri: string, array: any[]) {
+  public async daemonArray(path: string, array: any[]) {
+    const uri = this.toURI(this.daemonConf) + path;
+
     return this.rpcArray(uri, array);
   }
 
-  public async wallet(uri: string, method: string, params: object) {
+  public async wallet(path: string, method: string, params: object) {
+    const uri = this.toURI(this.walletConf) + path;
+
     return this.rpc(uri, method, params);
   }
 
-  public async pool(uri: string, method: string) {
+  public async pool(path: string, method: string) {
+    const uri = this.toURI(this.poolConf) + path;
     return this.request(uri, '', { method });
+  }
+
+  private toURI(config: any) {
+    if (config.url) {
+      return config.url;
+    }
+    if (config.host && config.port) {
+      if (config.port === 80) {
+        return 'http://' + config.host;
+      }
+      return 'http://' + config.host + ':' + config.port;
+    }
+    return 'http://localhost';
   }
   private async request(uri: string, method: string, formData: object) {
     const options: any = {
