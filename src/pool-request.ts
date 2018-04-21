@@ -46,12 +46,12 @@ export class PoolRequest {
   }
   private async request(uri: string, method: string, formData: object) {
     const options: any = {
+      body: formData,
       headers: {
         'User-Agent': 'VIG-COIN POOL Agent',
       },
       json: true, // Automatically parses the JSON string in the response
       uri,
-      body: formData,
     };
 
     if (method) {
